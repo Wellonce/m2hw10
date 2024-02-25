@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
-
+from django.contrib.auth import authenticate, login, logout
 from apps.gap.models import Room, Opinion, Comment, OpinionLike
+from django.contrib import messages
+from .forms import UserLoginForm, UserRegisterForm
 
 
 class RoomListView(View):
@@ -41,3 +43,45 @@ class OpinionDetailView(View):
             "comments": comments
         }
         return render(request, "gap/comments.html", context=context)
+
+class Loginview(View):
+    def get(self, request):
+        form = UserLoginForm()
+        return render(request, "gap/login.html", {'form': form})
+    
+    def post(self, request):
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            user = authenticate(username = username, password = password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"you have logged in as {username}")
+                return redirect ('landing_page')
+            else:
+                messages.erorr(request, "Wrong username or password")
+                return render(request, "users/login.html", {"form": form})
+        else:
+            return render(request, "users/login.html", {"form": form})
+        
+
+class UserRegisterView(View):
+    def get(self, request):
+        form = UserRegisterForm()
+        return render (request, "gap/register.html", {'form': form})
+    
+    def post (self, request):
+        form = UserRegisterForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sucessfully registered")
+            return redirect("gap:login-page")
+        else:
+            return render(request, "gap/register.html", {'form':form})
+
+class UserLogout(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "user successfully logged out!")
+        return redirect ('landing_page')

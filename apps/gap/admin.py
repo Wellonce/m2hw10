@@ -20,3 +20,7 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(OpinionLike)
 class OpinionLikeAdmin(admin.ModelAdmin):
     pass
+
+# @admin.register(gapUser)
+# class gapUserAdmin(admin.ModelAdmin):
+#     pass

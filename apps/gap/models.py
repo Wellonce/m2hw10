@@ -5,6 +5,9 @@ from django.db.models import Model, CharField, TextField, ForeignKey, CASCADE
 from apps.shared.models import AbstractModel
 
 
+# class gapUser(AbstractUser):
+#     avatar = models.ImageField(upload_to='Media') 
+
 class Room(AbstractModel):
     name = CharField(max_length=42)
 
